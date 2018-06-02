@@ -22,14 +22,20 @@ function createStore() {
     let listeners = []; // listeners are array of functions
     const getState = () => state // returns the state
     
-    const subscribe = (listener) => { //listening the changes to the state
+    const subscribe = (listener) => { // listening the changes to the state
         listeners.push(listener);
         return () => {
-            listeners = listeners.filter((l) => l !== listener);
+            listeners = listeners.filter((l) => l !== listener()); // loop through listeners to update state
         }
+    }
+
+    const dispatch = (action) => { // updates the state
+        state = todos(state, action);
+        listeners.forEach((listener) => listener);  
     }
     return {
         getState,
-        subscribe
+        subscribe,
+        dispatch
     };
 }
