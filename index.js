@@ -1,17 +1,11 @@
-function todos (state = [], action) { //todos is a reducer which is a pure function
-                                      //reducer takes in the state and the action and returns the new state
-    if (action.type === 'ADD_TODO') {
-      return state.concat([action.todo]);
-    }
-    return state;
-  }
+// Library Code
 
 // pure function requirements:
 // 1. return the same result if the same arguments are passed in
 // 2. depend solely on the arguments
 // 3. do no produce side effects
 
-function createStore() {
+function createStore(reducer) {
     // the store have four parts:
     // the state
     // get the state
@@ -30,7 +24,7 @@ function createStore() {
     }
 
     const dispatch = (action) => { // updates the state
-        state = todos(state, action);
+        state = reducer(state, action);
         listeners.forEach((listener) => listener);  
     }
     return {
@@ -38,4 +32,15 @@ function createStore() {
         subscribe,
         dispatch
     };
+}
+
+
+// App Code
+
+function todos (state = [], action) { //todos is a reducer which is a pure function
+    //reducer takes in the state and the action and returns the new state
+if (action.type === 'ADD_TODO') {
+return state.concat([action.todo]);
+}
+return state;
 }
