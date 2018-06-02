@@ -39,8 +39,52 @@ function createStore(reducer) {
 
 function todos (state = [], action) { //todos is a reducer which is a pure function
     //reducer takes in the state and the action and returns the new state
-if (action.type === 'ADD_TODO') {
-return state.concat([action.todo]);
+    switch(action.type) {
+        case 'ADD_TODO' :
+          return state.concat([action.todo])
+        case 'REMOVE_TODO' :
+          return state.filter((todo) => todo.id !== action.id)
+        case 'TOGGLE_TODO' :
+          return state.map((todo) => todo.id !== action.id ? todo :
+            Object.assign({}, todo, { complete: !todo.complete }))
+        default :
+          return state
+    }
 }
-return state;
+
+// another reducer which will maintain goals
+function goals (state = [], action) { 
+    switch(action.type) {
+      case 'ADD_GOAL' :
+        return state.concat([action.goal])
+      case 'REMOVE_GOAL' :
+        return state.filter((goal) => goal.id !== action.id)
+      default :
+        return state
+    }
 }
+
+// root reducer
+function app (state = {}, action) {
+    return {
+      todos: todos(state.todos, action),
+      goals: goals(state.goals, action),
+    }
+  }
+
+// create the store
+
+const store = createStore(app);
+
+store.subscribe(() => {
+  console.log('The new state is: ', store.getState())
+});
+
+store.dispatch({
+  type: 'ADD_TODO',
+  todo: {
+    id: 0,
+    name: 'Learn Redux',
+    complete: false
+  }
+})
