@@ -4,6 +4,9 @@
   <title>Pratibha Todos Goals</title>
 </head>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js'></script>
+<script src="https://unpkg.com/react@16.3.0-alpha.1/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
 <body>
   <div>
     <h1>Todo List</h1>
@@ -98,7 +101,28 @@ function removeGoalAction (id) {
       type: REMOVE_GOAL,
       id,
     }
-  }
+}
+
+const checker = (store) => (next) => (action) => {
+    if ( action.type === ADD_TODO &&
+        action.todo.name.toLowerCase().includes('bitcoin')) {
+          return alert("Nope. That's a bad idea.")
+    }
+    if ( action.type === ADD_GOAL &&
+        action.goal.name.toLowerCase().includes('bitcoin')) {
+          return alert("Nope. That's a bad idea.")
+    }
+    return next(action);
+}
+
+const logger = (store) => (next) => (action) => {
+  console.group(action.type);
+  console.log('The action: ', action);
+  const result = next(action);
+  console.log('The new state: ', store.getState());
+  console.groupEnd();
+  return result;
+}
   
 function todos (state = [], action) { //todos is a reducer which is a pure function
     //reducer takes in the state and the action and returns the new state
@@ -140,7 +164,7 @@ function goals (state = [], action) {
 const store = Redux.createStore(Redux.combineReducers({
   todos,
   goals
-}));
+}), Redux.applyMiddleware(checker,logger));
 
 store.subscribe(() => {
   const {goals, todos} = store.getState();
