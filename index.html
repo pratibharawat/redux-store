@@ -298,7 +298,9 @@
       }
     }
     ReactDOM.render(
-      <App store={store}/>,
+      <Provider store={store}>
+        <ConnectedApp />
+      </Provider>,
       document.getElementById('app')
     )
   </script>
